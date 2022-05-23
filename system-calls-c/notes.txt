@@ -1,0 +1,27 @@
+CONTROLLO DEGLI ARGOMENTI:
+- Numero degli argomenti: 
+    if(argc != 4){
+        fprinf(stderr, "Numero di argomenti errato\n");
+        fprintf(stderr, "Usage: \n\t%s Fin N C\n" argv[0]);
+        exit(1);
+    }
+
+- File assoluto nel file system: 
+    if(argv[1][0] != '/'){
+        fprinf(stderr, "Primo argomento non è un file assoluto\n");
+        exit(-2);
+    }
+    
+- Numero intero positivo:
+    int Tout; 
+    Tout = atoi(argv[2]);
+
+    if(Tout < 0){
+        fprinf(stderr, "Secondo argomento non è un un intero positivo\n");
+        exit(1);
+    }
+    
+- Nome di file di testo esistente nel file system -> nessun controllo 
+
+
+
