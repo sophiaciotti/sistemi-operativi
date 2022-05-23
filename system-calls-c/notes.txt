@@ -1,15 +1,21 @@
+VARIABILI GLOBALI: 
+int pfd[2]; //per pipe()
+int pid[2]; //per fork()
+int fdin; //per operazione su file: open(), close(), lseek(), read()
+
+
 CONTROLLO DEGLI ARGOMENTI:
 - Numero degli argomenti: 
     if(argc != 4){
         fprinf(stderr, "Numero di argomenti errato\n");
         fprintf(stderr, "Usage: \n\t%s Fin N C\n" argv[0]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
 - File assoluto nel file system: 
     if(argv[1][0] != '/'){
         fprinf(stderr, "Primo argomento non è un file assoluto\n");
-        exit(-2);
+        exit(EXIT_FAILURE);
     }
     
 - Numero intero positivo:
@@ -18,10 +24,49 @@ CONTROLLO DEGLI ARGOMENTI:
 
     if(Tout < 0){
         fprinf(stderr, "Secondo argomento non è un un intero positivo\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     
 - Nome di file di testo esistente nel file system -> nessun controllo 
+
+
+ESECUZIONE: 
+- Creazione della pipe: -> usata per aprire file descriptors
+    if(pipe(pfd) < 0){
+        fprintf(stderr, "Errore nella creazione della pipe tra P0 e P1\n"); 
+        exit(EXIT_FAILURE);
+    }
+
+
+CREAZIONE DI UN PROCESSO FIGLIO: 
+- Fork P0 - P1: 
+    pid[0] = fork();
+    if(pid[0] == 0){ //P1 -> figlio
+    ...
+    }
+    else if(pid[0] > 0){ // P0 -> padre
+    ...
+    }
+    else {
+       perror("P0: errore nella fork per P1\n");
+       exit(EXIT_FAILURE); 
+    }
+    
+
+WAIT CHILD: -> aspetta i figli e controlla il loro stato di terminazione
+void wait_child() {
+    int pid_terminated,status;
+    pid_terminated=wait(&status);
+    if(WIFEXITED(status))
+        printf("P0: terminazione volontaria del figlio %d con stato %d\n",
+                pid_terminated, WEXITSTATUS(status));
+    else if(WIFSIGNALED(status))
+        printf("P0: terminazione involontaria del figlio %d a causa del segnale %d\n",
+                pid_terminated,WTERMSIG(status));
+}
+
+
+
 
 
 
